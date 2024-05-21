@@ -5,43 +5,54 @@ import os
 import subprocess
 import json
 from tkinter import filedialog
+import writeToJson as WJ
+import pyttsx3 
 
 r = sr.Recognizer()
 shortcutsOpened = [None, None, None, None, None]
+engine = pyttsx3.init()
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
+
+def talk(sentence):
+    print(sentence)
+    engine.say(sentence)
+    engine.runAndWait() 
+
 
 def add_command():
     #open file explorer
-    print("Select the file you would like the command to access.")
+    talk("Select the file you would like the command to access.")
     newCommandPath1 = filedialog.askopenfilename()
 
     #returns to main loop if no file is selected
     if(newCommandPath1 == ""):
-        print("No New Command Added!")
+        talk("No New Command Added!")
         return""
 
     #ask if another file should be selected
-    print("Another path may be selected but is not requireed")
+    talk("Another path may be selected but is not requireed")
     newCommandPath2 = filedialog.askopenfilename()
 
     accepted = False
 
     #ask user to speak the name of application/set command name/get user to confirm command
     while(accepted == False):
-        print ("Please say the name of the command. This phrase will be precded by \'open\'")
+        talk ("Please say the name of the command. This phrase will be precded by \'open\'")
         command = record_text()
-        print("Are you sure you want the command to be \'open "+ command +"\'")
+        talk("Are you sure you want the command to be \'open "+ command +"\'")
         confirmation = ""
         while(confirmation != "no" and confirmation != "yes"):
-            print("Please respond with \'yes\' or \'no\'")
+            talk("Please respond with \'yes\' or \'no\'")
             confirmation = record_text()
             if(confirmation == "yes"):
                 accepted = True
 
     #store the command
-    print("Which command would you like to overwrite")
+    talk("Which command would you like to overwrite")
     validResponse = False
     while(validResponse != True):
-        print("Please respond with \'number one\', \'number two\', etc")
+        talk("Please respond with \'number one\', \'number two\', etc")
         response = record_text()
 
         with open('paths.json') as file:
@@ -49,37 +60,23 @@ def add_command():
 
         if(response == "number one"):
             validResponse = True
-            write_to_json(0, newCommandPath1, newCommandPath2, command)
+            WJ.write(0, newCommandPath1, newCommandPath2, command)
 
         elif(response == "number two"):
             validResponse = True
-            write_to_json(1, newCommandPath1, newCommandPath2, command)
+            WJ.write(1, newCommandPath1, newCommandPath2, command)
             
         elif(response == "number three"):
             validResponse = True
-            write_to_json(2, newCommandPath1, newCommandPath2, command)
+            WJ.write(2, newCommandPath1, newCommandPath2, command)
             
         elif(response == "number four"):
             validResponse = True
-            write_to_json(3, newCommandPath1, newCommandPath2, command)
+            WJ.write(3, newCommandPath1, newCommandPath2, command)
             
         elif(response == "number five"):
             validResponse = True
-            write_to_json(4, newCommandPath1, newCommandPath2, command)
-            
-
-def write_to_json(index, path1, path2, command):
-    with open('paths.json') as file:
-        paths = json.load(file)
-
-    paths[index]["primary_path"] = path1
-    paths[index]["secondary_path"] = path2
-    paths[index]["command"] = command
-
-    with open('paths.json', 'w') as file:
-        json.dump(paths, file, indent=4)
-
-    print("Command Saved!")
+            WJ.write(4, newCommandPath1, newCommandPath2, command)
 
 
 def open_file_from_shortcut(userInput, index):
@@ -93,12 +90,12 @@ def open_file_from_shortcut(userInput, index):
     if(userInput == "open "+ paths[index]["command"]):
         #check if file is already open
         if(shortcutsOpened[index] is None):
-            print("Opening "+ paths[index]["command"] +"...")
+            talk("Opening "+ paths[index]["command"] +"...")
             #save path
             shortcutsOpened[index] = subprocess.Popen([paths[index]["primary_path"], paths[index]["secondary_path"]])
             #shortcutsOpened[index] = subprocess.Popen(paths["primary_path"])
         else:
-            print(paths[index]["command"] +" is Already Open...")
+            talk(paths[index]["command"] +" is Already Open...")
 
 def close_file_from_shortcut(userInput, index):
     global shortcutsOpened
@@ -109,11 +106,11 @@ def close_file_from_shortcut(userInput, index):
 
     if(userInput == "close "+ paths[index]["command"]):
             if shortcutsOpened[index] is not None:
-                print("Closing "+ paths[index]["command"] +"...")
+                talk("Closing "+ paths[index]["command"] +"...")
                 shortcutsOpened[index].terminate()
                 shortcutsOpened[index] = None
             else:
-                print(paths[index]["command"] +" Was Not Open...")
+                talk(paths[index]["command"] +" Was Not Open...")
 
 def record_text():
     r = sr.Recognizer()
@@ -124,17 +121,17 @@ def record_text():
                 try:
                 #adjust audio levels based on ambient noisse
                     r.adjust_for_ambient_noise(source, duration=0.2)
-                    print("Ready for Commands...")
+                    talk("Ready for Commands...")
                     audio2 = r.listen(source, timeout=5)
                     
                     MyText = r.recognize_google(audio2)
-                    print(MyText)
+                    talk(MyText)
                     return MyText
 
                 #if there is an issue, just the function again
                 except Exception as e:
-                    print(f"An error occurred: {e}")
-                    print("I didn't Understand. Try Again...")
+                    talk(f"An error occurred: {e}")
+                    talk("I didn't Understand. Try Again...")
                     r = sr.Recognizer()
                     continue
                 
@@ -155,7 +152,7 @@ def jasmineLoop():
     #global shortcut1Open
 
     while(acceptingCommands):
-        print("running...")
+        talk("running...")
 
         text = record_text()
 
@@ -164,6 +161,7 @@ def jasmineLoop():
             add_command()
 
         if(text == "goodbye"):
+            talk("Have a good day!")
             quit()
 
         #check if the user is trying to open/close a shortcut
