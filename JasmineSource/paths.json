@@ -1,4 +1,27 @@
-{
-    "primary_path": "C:\\Program Files\\mGBA\\mGBA.exe",
-    "secondary_path" : "c:\\Users\\zacgo\\Desktop\\New Radical Red\\1636 - Pokemon Fire Red (U)(Squirrels) (patched).gba"
-}
+[
+    {
+        "primary_path": "C:/Program Files/mGBA/mGBA.exe",
+        "secondary_path": "c:/Users/zacgo/Desktop//New Radical Red//1636 - Pokemon Fire Red (U)(Squirrels) (patched).gba",
+        "command": "radical red"
+    },
+    {
+        "primary_path": "C:/Users/zacgo/Desktop/DeSmuME_0.9.13_x64.exe",
+        "secondary_path": "",
+        "command": "new command"
+    },
+    {
+        "primary_path": "C:/Program Files (x86)/Steam/steamapps/common/MARVEL SNAP/SNAP.exe",
+        "secondary_path": "",
+        "command": "Marvel snap"
+    },
+    {
+        "primary_path": "",
+        "secondary_path": "",
+        "command": ""
+    },
+    {
+        "primary_path": "",
+        "secondary_path": "",
+        "command": ""
+    }
+]
